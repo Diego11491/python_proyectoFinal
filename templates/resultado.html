@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Resultado</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Estudiante Registrado</h1>
+    <p><strong>Nombre:</strong> {{ estudiante.nombre }}</p>
+    <p><strong>Edad:</strong> {{ estudiante.edad }}</p>
+    <p><strong>Nota:</strong> {{ estudiante.nota }}</p>
+    <p><strong>Promedio actual:</strong> {{ promedio }}</p>
+
+    <a href="/registro">Registrar otro</a> |
+    <a href="/">Inicio</a>
+</body>
+</html>

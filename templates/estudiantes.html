@@ -1,0 +1,17 @@
+<h2>Lista de Estudiantes</h2>
+<table border="1">
+  <tr><th>Nombre</th><th>Edad</th><th>Nota</th></tr>
+  {% for est in estudiantes %}
+    <tr><td>{{ est.nombre }}</td><td>{{ est.edad }}</td><td>{{ est.nota }}</td></tr>
+  {% endfor %}
+</table>
+
+<div>
+  {% if page > 1 %}
+    <a href="{{ url_for('listar_estudiantes', page=page-1) }}">Anterior</a>
+  {% endif %}
+  Página {{ page }} de {{ total_pages }}
+  {% if page < total_pages %}
+    <a href="{{ url_for('listar_estudiantes', page=page+1) }}">Siguiente</a>
+  {% endif %}
+</div>

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Presentaciones</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Presentaciones de Estudiantes</h1>
+    <ul>
+        {% for estudiante in estudiantes %}
+            <li>{{ estudiante.presentarse() }}</li>
+        {% endfor %}
+    </ul>
+
+    <a href="/">Volver al inicio</a>
+</body>
+</html>

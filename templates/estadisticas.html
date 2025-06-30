@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Estadísticas</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Estadísticas Generales</h1>
+    <ul>
+        <li>Promedio: {{ promedio }}</li>
+        <li>Máximo: {{ maximo }}</li>
+        <li>Mínimo: {{ minimo }}</li>
+        <li>Aprobados: {{ aprobados }}</li>
+        <li>Desaprobados: {{ desaprobados }}</li>
+        <li>Total de estudiantes: {{ total }}</li>
+    </ul>
+
+    <canvas id="graficoNotas" width="400" height="200"></canvas>
+
+    <script>
+    const ctx = document.getElementById('graficoNotas').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Promedio', 'Máximo', 'Mínimo'],
+            datasets: [{
+                label: 'Notas',
+                data: [{{ promedio }}, {{ maximo }}, {{ minimo }}],
+                backgroundColor: ['#4e73df', '#1cc88a', '#e74a3b']
+            }]
+        },
+        options: {
+            responsive: true
+        }
+    });
+    </script>
+
+    <br>
+    <a href="/descargar-excel">📊 Generar Excel</a> |
+    <a href="/descargar-pdf">📄 Generar PDF</a>
+</body>
+</html>
