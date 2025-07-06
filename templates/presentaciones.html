@@ -2,8 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Presentaciones</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Presentaciones - CRUD</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
@@ -143,126 +142,6 @@
             border-radius: 2px;
         }
 
-        ul {
-            list-style: none;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 2rem;
-            margin-bottom: 3rem;
-        }
-
-        li {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 2rem;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            animation: slideInLeft 0.8s ease both;
-        }
-
-        li:nth-child(1) { animation-delay: 0.1s; }
-        li:nth-child(2) { animation-delay: 0.2s; }
-        li:nth-child(3) { animation-delay: 0.3s; }
-        li:nth-child(4) { animation-delay: 0.4s; }
-        li:nth-child(5) { animation-delay: 0.5s; }
-        li:nth-child(6) { animation-delay: 0.6s; }
-        li:nth-child(n+7) { animation-delay: 0.7s; }
-
-        li:hover {
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-        }
-
-
-
-        li::after {
-            content: '\f007';
-            font-family: 'Font Awesome 6 Free';
-            font-weight: 900;
-            position: absolute;
-            top: 2rem;
-            right: 2rem;
-            font-size: 2rem;
-            color: rgba(102, 126, 234, 0.2);
-            transition: all 0.3s ease;
-        }
-
-        li:hover::after {
-            color: rgba(102, 126, 234, 0.4);
-            transform: rotate(15deg) scale(1.1);
-        }
-
-        /* Estilos para el contenido del estudiante */
-        li {
-            font-size: 1.1rem;
-            line-height: 1.6;
-            color: #333;
-            font-weight: 500;
-            position: relative;
-            z-index: 1;
-        }
-
-        /* Botón de volver */
-        a {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 1.2rem 2.5rem;
-            background: transparent;
-            border: 2px solid rgba(255, 255, 255, 0.8);
-            color: white;
-            text-decoration: none;
-            border-radius: 12px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin: 2rem auto;
-            display: flex;
-            justify-content: center;
-            max-width: 300px;
-            font-size: 1rem;
-            animation: fadeInUp 1s ease 0.8s both;
-            position: relative;
-            overflow: hidden;
-        }
-
-        a::before {
-            content: '\f015';
-            font-family: 'Font Awesome 6 Free';
-            font-weight: 900;
-        }
-
-        a::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-
-        a:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: white;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
-        }
-
-        a:active::after {
-            width: 300px;
-            height: 300px;
-        }
-
-        /* Contador de estudiantes */
         .student-counter {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
@@ -289,7 +168,6 @@
             letter-spacing: 1px;
         }
 
-        /* Filtro de búsqueda */
         .search-container {
             margin-bottom: 2rem;
             animation: fadeInUp 1s ease 0.6s both;
@@ -333,7 +211,155 @@
             pointer-events: none;
         }
 
-        /* Efecto de carga para cuando no hay estudiantes */
+        .students-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .student-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            animation: slideInLeft 0.8s ease both;
+        }
+
+        .student-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .student-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .student-card::after {
+            content: '\f007';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            font-size: 1.5rem;
+            color: rgba(102, 126, 234, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .student-card:hover::after {
+            color: rgba(102, 126, 234, 0.4);
+            transform: rotate(15deg) scale(1.1);
+        }
+
+        .student-info {
+            margin-bottom: 1.5rem;
+        }
+
+        .student-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .student-details {
+            color: #666;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .student-age {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .student-grade {
+            color: #764ba2;
+            font-weight: 600;
+        }
+
+        .student-actions {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: flex-end;
+            margin-top: 1rem;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-edit {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+
+        .btn-delete {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #da190b;
+            transform: translateY(-2px);
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1.2rem 2.5rem;
+            background: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 2rem auto;
+            display: flex;
+            justify-content: center;
+            max-width: 300px;
+            font-size: 1rem;
+            animation: fadeInUp 1s ease 0.8s both;
+        }
+
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
+        }
+
         .no-students {
             text-align: center;
             color: white;
@@ -352,6 +378,131 @@
             opacity: 0.7;
         }
 
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            animation: modalAppear 0.3s ease;
+        }
+
+        @keyframes modalAppear {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #eee;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .close {
+            font-size: 2rem;
+            cursor: pointer;
+            color: #aaa;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover {
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+        }
+
+        .btn-save {
+            background: #667eea;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-save:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+        }
+
+        .btn-cancel {
+            background: #6c757d;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-cancel:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             body {
@@ -363,14 +514,13 @@
                 margin-bottom: 2rem;
             }
             
-            ul {
+            .students-grid {
                 grid-template-columns: 1fr;
                 gap: 1.5rem;
             }
             
-            li {
+            .student-card {
                 padding: 1.5rem;
-                font-size: 1rem;
             }
             
             .floating-shape {
@@ -387,29 +537,13 @@
                 font-size: 1.8rem;
             }
             
-            li {
+            .student-card {
                 padding: 1.2rem;
             }
             
-            a {
+            .btn-back {
                 padding: 1rem 2rem;
                 font-size: 0.9rem;
-            }
-        }
-
-        /* Efectos adicionales para interactividad */
-        .student-card-enter {
-            animation: studentCardEnter 0.6s ease both;
-        }
-
-        @keyframes studentCardEnter {
-            from {
-                opacity: 0;
-                transform: translateY(50px) rotateX(45deg);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) rotateX(0);
             }
         }
     </style>
@@ -437,11 +571,30 @@
             </div>
         </div>
         
-        <ul id="studentList">
+        <div class="students-grid" id="studentsGrid">
             {% for estudiante in estudiantes %}
-                <li>{{ estudiante.presentarse() }}</li>
+            <div class="student-card" data-name="{{ estudiante.nombre.lower() }}">
+                <div class="student-info">
+                    <div class="student-name">{{ estudiante.nombre }}</div>
+                    <div class="student-details">
+                        <div><strong>Edad:</strong> <span class="student-age">{{ estudiante.edad }} años</span></div>
+                        <div><strong>Nota:</strong> <span class="student-grade">{{ estudiante.nota }}</span></div>
+                        <div style="margin-top: 1rem; padding: 1rem; background: rgba(102, 126, 234, 0.1); border-radius: 8px; font-style: italic;">
+                            "{{ estudiante.presentarse() }}"
+                        </div>
+                    </div>
+                </div>
+                <div class="student-actions">
+                    <button class="btn btn-edit" onclick="openEditModal('{{ estudiante.nombre }}', {{ estudiante.edad }}, {{ estudiante.nota }})">
+                        <i class="fas fa-edit"></i> Editar
+                    </button>
+                    <button class="btn btn-delete" onclick="confirmDelete('{{ estudiante.nombre }}')">
+                        <i class="fas fa-trash"></i> Eliminar
+                    </button>
+                </div>
+            </div>
             {% endfor %}
-        </ul>
+        </div>
 
         <!-- Mensaje cuando no hay estudiantes -->
         <div class="no-students" id="noStudents" style="display: none;">
@@ -450,19 +603,49 @@
             <p style="font-size: 1rem; margin-top: 0.5rem; opacity: 0.8;">¡Comienza registrando el primer estudiante!</p>
         </div>
 
-        <a href="/">Volver al inicio</a>
+        <a href="/" class="btn-back">
+            <i class="fas fa-home"></i> Volver al inicio
+        </a>
+    </div>
+
+    <!-- Modal para editar estudiante -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Editar Estudiante</h2>
+                <span class="close" onclick="closeEditModal()">&times;</span>
+            </div>
+            <form id="editForm">
+                <div class="form-group">
+                    <label for="editNombre">Nombre:</label>
+                    <input type="text" id="editNombre" name="nombre" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="editEdad">Edad:</label>
+                    <input type="number" id="editEdad" name="edad" min="1" max="120" required>
+                </div>
+                <div class="form-group">
+                    <label for="editNota">Nota:</label>
+                    <input type="number" id="editNota" name="nota" min="0" max="20" step="0.01" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="closeEditModal()">Cancelar</button>
+                    <button type="submit" class="btn-save">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const studentList = document.getElementById('studentList');
+            const studentsGrid = document.getElementById('studentsGrid');
             const studentCount = document.getElementById('studentCount');
             const searchInput = document.getElementById('searchInput');
             const noStudents = document.getElementById('noStudents');
             
             // Contar estudiantes y animar contador
             function updateStudentCount() {
-                const students = studentList.querySelectorAll('li');
+                const students = studentsGrid.querySelectorAll('.student-card');
                 const count = students.length;
                 
                 // Animación del contador
@@ -479,10 +662,10 @@
                 
                 // Mostrar mensaje si no hay estudiantes
                 if (count === 0) {
-                    studentList.style.display = 'none';
+                    studentsGrid.style.display = 'none';
                     noStudents.style.display = 'block';
                 } else {
-                    studentList.style.display = 'grid';
+                    studentsGrid.style.display = 'grid';
                     noStudents.style.display = 'none';
                 }
             }
@@ -490,11 +673,11 @@
             // Funcionalidad de búsqueda
             searchInput.addEventListener('input', function() {
                 const searchTerm = this.value.toLowerCase();
-                const students = studentList.querySelectorAll('li');
+                const students = studentsGrid.querySelectorAll('.student-card');
                 
                 students.forEach(student => {
-                    const text = student.textContent.toLowerCase();
-                    if (text.includes(searchTerm)) {
+                    const name = student.dataset.name;
+                    if (name.includes(searchTerm)) {
                         student.style.display = 'block';
                         student.style.animation = 'fadeInUp 0.3s ease';
                     } else {
@@ -503,31 +686,84 @@
                 });
             });
             
-            // Efecto parallax para elementos flotantes
-            window.addEventListener('scroll', () => {
-                const scrolled = window.pageYOffset;
-                const shapes = document.querySelectorAll('.floating-shape');
-                
-                shapes.forEach((shape, index) => {
-                    const speed = 0.5 * (index + 1);
-                    shape.style.transform = `translateY(${scrolled * speed}px) rotate(${scrolled * 0.1}deg)`;
-                });
-            });
-            
-            // Animación de entrada escalonada para las tarjetas
-            function animateCards() {
-                const cards = studentList.querySelectorAll('li');
-                cards.forEach((card, index) => {
-                    setTimeout(() => {
-                        card.classList.add('student-card-enter');
-                    }, index * 100);
-                });
-            }
-            
             // Inicializar
             updateStudentCount();
-            animateCards();
         });
+
+        // Funciones para el modal de edición
+        function openEditModal(nombre, edad, nota) {
+            document.getElementById('editNombre').value = nombre;
+            document.getElementById('editEdad').value = edad;
+            document.getElementById('editNota').value = nota;
+            document.getElementById('editModal').style.display = 'block';
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+
+        // Manejar envío del formulario de edición
+        document.getElementById('editForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const nombre = document.getElementById('editNombre').value;
+            const edad = document.getElementById('editEdad').value;
+            const nota = document.getElementById('editNota').value;
+            
+            // Crear formulario oculto para enviar datos
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/editar-estudiante';
+            
+            const inputNombre = document.createElement('input');
+            inputNombre.type = 'hidden';
+            inputNombre.name = 'nombre';
+            inputNombre.value = nombre;
+            
+            const inputEdad = document.createElement('input');
+            inputEdad.type = 'hidden';
+            inputEdad.name = 'edad';
+            inputEdad.value = edad;
+            
+            const inputNota = document.createElement('input');
+            inputNota.type = 'hidden';
+            inputNota.name = 'nota';
+            inputNota.value = nota;
+            
+            form.appendChild(inputNombre);
+            form.appendChild(inputEdad);
+            form.appendChild(inputNota);
+            
+            document.body.appendChild(form);
+            form.submit();
+        });
+
+        // Función para confirmar eliminación
+        function confirmDelete(nombre) {
+            if (confirm(`¿Estás seguro de que quieres eliminar al estudiante "${nombre}"?`)) {
+                // Crear formulario oculto para enviar datos
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '/eliminar-estudiante';
+                
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'nombre';
+                input.value = nombre;
+                
+                form.appendChild(input);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+
+        // Cerrar modal al hacer clic fuera
+        window.onclick = function(event) {
+            const modal = document.getElementById('editModal');
+            if (event.target === modal) {
+                closeEditModal();
+            }
+        }
     </script>
 </body>
 </html>

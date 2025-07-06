@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, send_file
 from models import Estudiante
-from utils import calcular_promedio, cargar_estudiantes_csv
+from utils import calcular_promedio, cargar_estudiantes_csv, eliminar_estudiante_csv, editar_estudiante_csv
 import pandas as pd
 import numpy as np
 import os
@@ -54,16 +54,43 @@ def estadisticas():
                            desaprobados=desaprobados,
                            total=len(df),
                            mejores_estudiantes=mejores_estudiantes)
-                          
 
 @app.route('/presentaciones')
 def presentaciones():
     if not os.path.exists(DATA_FILE):
-        return "No hay datos registrados aún."
+        return render_template('presentaciones.html', estudiantes=[])
 
     df = cargar_estudiantes_csv(DATA_FILE)
     estudiantes = [Estudiante(row['nombre'], row['edad'], row['nota']) for _, row in df.iterrows()]
     return render_template('presentaciones.html', estudiantes=estudiantes)
+
+# ===== NUEVAS RUTAS PARA CRUD =====
+
+@app.route('/editar-estudiante', methods=['POST'])
+def editar_estudiante():
+    nombre = request.form['nombre']
+    nueva_edad = int(request.form['edad'])
+    nueva_nota = float(request.form['nota'])
+    
+    success = editar_estudiante_csv(DATA_FILE, nombre, nueva_edad, nueva_nota)
+    
+    if success:
+        return redirect('/presentaciones')
+    else:
+        return "Error al editar el estudiante", 500
+
+@app.route('/eliminar-estudiante', methods=['POST'])
+def eliminar_estudiante():
+    nombre = request.form['nombre']
+    
+    success = eliminar_estudiante_csv(DATA_FILE, nombre)
+    
+    if success:
+        return redirect('/presentaciones')
+    else:
+        return "Error al eliminar el estudiante", 500
+
+# ===== FIN NUEVAS RUTAS =====
 
 @app.route('/descargar-excel')
 def descargar_excel():
