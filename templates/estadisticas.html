@@ -144,6 +144,114 @@
             font-weight: 600;
         }
 
+        .top-students-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 3rem;
+            animation: fadeInUp 1s ease 0.6s both;
+        }
+
+        .top-students-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 2rem;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .top-students-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .top-student-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .top-student-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .top-student-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.1);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .top-student-card:hover::before {
+            opacity: 1;
+        }
+
+        .position-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: #ffd700;
+            color: #333;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .position-badge.second {
+            background: #c0c0c0;
+        }
+
+        .position-badge.third {
+            background: #cd7f32;
+        }
+
+        .student-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .student-score {
+            font-size: 2rem;
+            font-weight: bold;
+            position: relative;
+            z-index: 1;
+        }
+
+        .trophy-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            opacity: 0.8;
+        }
+
         .chart-container {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
@@ -152,7 +260,7 @@
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
             margin-bottom: 3rem;
-            animation: fadeInUp 1s ease 0.7s both;
+            animation: fadeInUp 1s ease 0.8s both;
         }
 
         .chart-title {
@@ -171,7 +279,7 @@
         .download-section {
             text-align: center;
             margin-top: 3rem;
-            animation: fadeInUp 1s ease 0.8s both;
+            animation: fadeInUp 1s ease 0.9s both;
         }
 
         .download-buttons {
@@ -297,6 +405,10 @@
             .stat-card {
                 padding: 1.5rem;
             }
+
+            .top-students-grid {
+                grid-template-columns: 1fr;
+            }
             
             .chart-container {
                 padding: 1.5rem;
@@ -374,6 +486,35 @@
                 <div class="stat-label">Total de estudiantes</div>
             </div>
         </div>
+
+        {% if mejores_estudiantes %}
+        <div class="top-students-section">
+            <h2 class="top-students-title">
+                <i class="fas fa-trophy"></i>
+                Top 3 Mejores Estudiantes
+            </h2>
+            <div class="top-students-grid">
+                {% for nombre, nota in mejores_estudiantes %}
+                <div class="top-student-card">
+                    <div class="position-badge {% if loop.index == 2 %}second{% elif loop.index == 3 %}third{% endif %}">
+                        {{ loop.index }}
+                    </div>
+                    <div class="trophy-icon">
+                        {% if loop.index == 1 %}
+                            <i class="fas fa-trophy"></i>
+                        {% elif loop.index == 2 %}
+                            <i class="fas fa-medal"></i>
+                        {% else %}
+                            <i class="fas fa-award"></i>
+                        {% endif %}
+                    </div>
+                    <div class="student-name">{{ nombre }}</div>
+                    <div class="student-score">{{ nota }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
 
         <div class="chart-container">
             <h2 class="chart-title">

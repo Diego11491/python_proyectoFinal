@@ -1,15 +1,39 @@
 import pandas as pd
 import numpy as np
+import os
 
 def calcular_promedio(ruta_csv):
     try:
         df = pd.read_csv(ruta_csv)
+        if df.empty:
+            return 0
         return round(np.mean(df['nota']), 2)
     except:
         return 0
 
 def cargar_estudiantes_csv(ruta_csv):
     try:
-        return pd.read_csv(ruta_csv)
+        df = pd.read_csv(ruta_csv)
+        df = df.drop_duplicates(subset=['nombre'], keep='last')
+        return df
     except:
-        return pd.DataFrame()
+        return pd.DataFrame(columns=['nombre', 'edad', 'nota'])
+
+def eliminar_estudiante_csv(ruta_csv, nombre):
+    try:
+        df = pd.read_csv(ruta_csv)
+        df = df[df['nombre'] != nombre]
+        df.to_csv(ruta_csv, index=False)
+        return True
+    except:
+        return False
+
+def editar_estudiante_csv(ruta_csv, nombre, nueva_edad, nueva_nota):
+    try:
+        df = pd.read_csv(ruta_csv)
+        df.loc[df['nombre'] == nombre, 'edad'] = nueva_edad
+        df.loc[df['nombre'] == nombre, 'nota'] = nueva_nota
+        df.to_csv(ruta_csv, index=False)
+        return True
+    except:
+        return False

@@ -42,13 +42,19 @@ def estadisticas():
     aprobados = df[df['nota'] >= 11].shape[0]
     desaprobados = df[df['nota'] < 11].shape[0]
 
+    # Obtener los 3 mejores estudiantes como tuplas
+    top3 = df.sort_values(by='nota', ascending=False).head(3)
+    mejores_estudiantes = [(row['nombre'], row['nota']) for _, row in top3.iterrows()]
+
     return render_template('estadisticas.html',
                            promedio=promedio,
                            maximo=maximo,
                            minimo=minimo,
                            aprobados=aprobados,
                            desaprobados=desaprobados,
-                           total=len(df))
+                           total=len(df),
+                           mejores_estudiantes=mejores_estudiantes)
+                          
 
 @app.route('/presentaciones')
 def presentaciones():
