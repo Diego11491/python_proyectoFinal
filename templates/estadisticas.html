@@ -4,19 +4,398 @@
     <meta charset="UTF-8">
     <title>Estadísticas</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #666;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #667eea;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 3rem auto;
+            padding: 0 2rem;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: white;
+            animation: fadeInUp 1s ease;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            animation: fadeInUp 1s ease both;
+        }
+
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+        .stat-card:nth-child(5) { animation-delay: 0.5s; }
+        .stat-card:nth-child(6) { animation-delay: 0.6s; }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .stat-icon.promedio { color: #4e73df; }
+        .stat-icon.maximo { color: #1cc88a; }
+        .stat-icon.minimo { color: #e74a3b; }
+        .stat-icon.aprobados { color: #36b9cc; }
+        .stat-icon.desaprobados { color: #f6c23e; }
+        .stat-icon.total { color: #858796; }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .chart-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 3rem;
+            animation: fadeInUp 1s ease 0.7s both;
+        }
+
+        .chart-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        #graficoNotas {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .download-section {
+            text-align: center;
+            margin-top: 3rem;
+            animation: fadeInUp 1s ease 0.8s both;
+        }
+
+        .download-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-excel {
+            background: linear-gradient(135deg, #1cc88a, #13855c);
+            color: white;
+        }
+
+        .btn-pdf {
+            background: linear-gradient(135deg, #e74a3b, #c0392b);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .floating-shape {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-shape:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-shape:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            bottom: 20%;
+            right: 10%;
+            animation-delay: 3s;
+        }
+
+        .floating-shape:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            top: 60%;
+            left: 80%;
+            animation-delay: 1.5s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 0 1rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .nav-links {
+                gap: 1rem;
+            }
+            
+            .main-container {
+                padding: 0 1rem;
+                margin: 2rem auto;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .stat-card {
+                padding: 1.5rem;
+            }
+            
+            .chart-container {
+                padding: 1.5rem;
+            }
+            
+            .download-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 250px;
+                justify-content: center;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Estadísticas Generales</h1>
-    <ul>
-        <li>Promedio: {{ promedio }}</li>
-        <li>Máximo: {{ maximo }}</li>
-        <li>Mínimo: {{ minimo }}</li>
-        <li>Aprobados: {{ aprobados }}</li>
-        <li>Desaprobados: {{ desaprobados }}</li>
-        <li>Total de estudiantes: {{ total }}</li>
-    </ul>
+    <div class="floating-elements">
+        <div class="floating-shape"></div>
+        <div class="floating-shape"></div>
+        <div class="floating-shape"></div>
+    </div>
+    
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                EduStats
+            </div>
+            <div class="nav-links">
+                <a href="/"><i class="fas fa-home"></i> Inicio</a>
+                <a href="/registro"><i class="fas fa-user-plus"></i> Registro</a>
+                <a href="/estadisticas"><i class="fas fa-chart-bar"></i> Estadísticas</a>
+                <a href="/presentaciones"><i class="fas fa-users"></i> Estudiantes</a>
+            </div>
+        </div>
+    </nav>
 
-    <canvas id="graficoNotas" width="400" height="200"></canvas>
+    <div class="main-container">
+        <div class="page-header">
+            <h1><i class="fas fa-chart-line"></i> Estadísticas Generales</h1>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <i class="fas fa-calculator stat-icon promedio"></i>
+                <div class="stat-value">{{ promedio }}</div>
+                <div class="stat-label">Promedio</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-arrow-up stat-icon maximo"></i>
+                <div class="stat-value">{{ maximo }}</div>
+                <div class="stat-label">Máximo</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-arrow-down stat-icon minimo"></i>
+                <div class="stat-value">{{ minimo }}</div>
+                <div class="stat-label">Mínimo</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-check-circle stat-icon aprobados"></i>
+                <div class="stat-value">{{ aprobados }}</div>
+                <div class="stat-label">Aprobados</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-times-circle stat-icon desaprobados"></i>
+                <div class="stat-value">{{ desaprobados }}</div>
+                <div class="stat-label">Desaprobados</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-users stat-icon total"></i>
+                <div class="stat-value">{{ total }}</div>
+                <div class="stat-label">Total de estudiantes</div>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <h2 class="chart-title">
+                <i class="fas fa-chart-bar"></i>
+                Gráfico de Notas
+            </h2>
+            <canvas id="graficoNotas" width="400" height="200"></canvas>
+        </div>
+
+        <div class="download-section">
+            <div class="download-buttons">
+                <a href="/descargar-excel" class="btn btn-excel">
+                    <i class="fas fa-file-excel"></i>
+                    Generar Excel
+                </a>
+                <a href="/descargar-pdf" class="btn btn-pdf">
+                    <i class="fas fa-file-pdf"></i>
+                    Generar PDF
+                </a>
+            </div>
+        </div>
+    </div>
 
     <script>
     const ctx = document.getElementById('graficoNotas').getContext('2d');
@@ -27,17 +406,72 @@
             datasets: [{
                 label: 'Notas',
                 data: [{{ promedio }}, {{ maximo }}, {{ minimo }}],
-                backgroundColor: ['#4e73df', '#1cc88a', '#e74a3b']
+                backgroundColor: ['#4e73df', '#1cc88a', '#e74a3b'],
+                borderColor: ['#3651c7', '#13855c', '#c0392b'],
+                borderWidth: 2,
+                borderRadius: 8,
+                borderSkipped: false,
             }]
         },
         options: {
-            responsive: true
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: {
+                        usePointStyle: true,
+                        padding: 20,
+                        font: {
+                            size: 14,
+                            weight: 'bold'
+                        }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    titleColor: 'white',
+                    bodyColor: 'white',
+                    cornerRadius: 10,
+                    padding: 15
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.1)'
+                    },
+                    ticks: {
+                        font: {
+                            size: 12,
+                            weight: 'bold'
+                        }
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        font: {
+                            size: 12,
+                            weight: 'bold'
+                        }
+                    }
+                }
+            }
         }
     });
-    </script>
 
-    <br>
-    <a href="/descargar-excel">📊 Generar Excel</a> |
-    <a href="/descargar-pdf">📄 Generar PDF</a>
-</body>
+    // Efecto parallax suave para elementos flotantes
+    window.addEventListener('scroll', () => {
+        const scrolled = window.pageYOffset;
+        const shapes = document.querySelectorAll('.floating-shape');
+        
+        shapes.forEach((shape, index) => {
+            const speed = 0.5 * (index + 1);
+            shape.style.transform = `translateY(${scrolled * speed}px)`;
+        });
+    });
+    </script>
 </html>
