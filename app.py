@@ -5,6 +5,10 @@ from utils import (
     cargar_estudiantes_csv,
     eliminar_estudiante_csv,
     editar_estudiante_csv,
+    ordenar_estudiantes,
+    buscar_estudiantes,
+    estadisticas_por_grupo_edad,
+    obtener_lista_diccionarios
 )
 import pandas as pd
 import numpy as np
@@ -15,11 +19,9 @@ from fpdf import FPDF
 app = Flask(__name__)
 DATA_FILE = "data/estudiantes.csv"
 
-
 @app.route("/")
 def index():
     return render_template("index.html")
-
 
 @app.route("/registro", methods=["GET", "POST"])
 def registro():
@@ -38,7 +40,6 @@ def registro():
         )
     return render_template("registro.html")
 
-
 @app.route("/estadisticas")
 def estadisticas():
     if not os.path.exists(DATA_FILE):
@@ -56,6 +57,9 @@ def estadisticas():
     top3 = df.sort_values(by="nota", ascending=False).head(3)
     mejores_estudiantes = [(row["nombre"], row["nota"]) for _, row in top3.iterrows()]
 
+    # Estadísticas por edad
+    grupo_edad = estadisticas_por_grupo_edad(df)
+
     return render_template(
         "estadisticas.html",
         promedio=promedio,
@@ -65,8 +69,8 @@ def estadisticas():
         desaprobados=desaprobados,
         total=len(df),
         mejores_estudiantes=mejores_estudiantes,
+        grupo_edad=grupo_edad
     )
-
 
 @app.route("/presentaciones")
 def presentaciones():
@@ -79,29 +83,29 @@ def presentaciones():
     ]
     return render_template("presentaciones.html", estudiantes=estudiantes)
 
-
 @app.route("/estructura-datos")
 def estructura_datos():
-    if not os.path.exists(DATA_FILE):
-        return "No hay datos."
+    datos = obtener_lista_diccionarios(DATA_FILE)
+    return render_template("estructura_datos.html", lista_estudiantes=datos)
 
-    df = pd.read_csv(DATA_FILE)
+@app.route("/buscar", methods=["GET", "POST"])
+def buscar():
+    resultados = []
+    termino = ""
+    if request.method == "POST":
+        termino = request.form["termino"]
+        df = cargar_estudiantes_csv(DATA_FILE)
+        resultados = buscar_estudiantes(df, termino).to_dict("records")
+    return render_template("buscar.html", resultados=resultados, termino=termino)
 
-    lista_estudiantes = []
-
-    for _, row in df.iterrows():
-        estudiante_dict = {
-            "nombre": row["nombre"],
-            "edad": row["edad"],
-            "nota": row["nota"],
-        }
-        lista_estudiantes.append(estudiante_dict)
-
-    return render_template("estructura_datos.html", lista_estudiantes=lista_estudiantes)
-
-
-# ===== RUTAS PARA CRUD =====
-
+@app.route("/ordenar")
+def ordenar():
+    criterio = request.args.get("criterio", "nota")
+    asc = request.args.get("asc", "false") == "true"
+    df = cargar_estudiantes_csv(DATA_FILE)
+    df_ordenado = ordenar_estudiantes(df, columna=criterio, ascendente=asc)
+    estudiantes = df_ordenado.to_dict("records")
+    return render_template("ordenar.html", estudiantes=estudiantes, criterio=criterio, asc=asc)
 
 @app.route("/editar-estudiante", methods=["POST"])
 def editar_estudiante():
@@ -116,7 +120,6 @@ def editar_estudiante():
     else:
         return "Error al editar el estudiante", 500
 
-
 @app.route("/eliminar-estudiante", methods=["POST"])
 def eliminar_estudiante():
     nombre = request.form["nombre"]
@@ -127,10 +130,6 @@ def eliminar_estudiante():
         return redirect("/presentaciones")
     else:
         return "Error al eliminar el estudiante", 500
-
-
-# ===== FIN NUEVAS RUTAS =====
-
 
 @app.route("/descargar-excel")
 def descargar_excel():
@@ -149,7 +148,6 @@ def descargar_excel():
         download_name="reporte_estudiantes.xlsx",
         mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     )
-
 
 @app.route("/descargar-pdf")
 def descargar_pdf():
@@ -179,9 +177,6 @@ def descargar_pdf():
         mimetype="application/pdf",
     )
 
-
 if __name__ == "__main__":
-    import os
-
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
