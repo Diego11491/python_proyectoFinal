@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <title>Estadísticas</title>
@@ -104,12 +105,29 @@
             animation: fadeInUp 1s ease both;
         }
 
-        .stat-card:nth-child(1) { animation-delay: 0.1s; }
-        .stat-card:nth-child(2) { animation-delay: 0.2s; }
-        .stat-card:nth-child(3) { animation-delay: 0.3s; }
-        .stat-card:nth-child(4) { animation-delay: 0.4s; }
-        .stat-card:nth-child(5) { animation-delay: 0.5s; }
-        .stat-card:nth-child(6) { animation-delay: 0.6s; }
+        .stat-card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .stat-card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .stat-card:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .stat-card:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        .stat-card:nth-child(5) {
+            animation-delay: 0.5s;
+        }
+
+        .stat-card:nth-child(6) {
+            animation-delay: 0.6s;
+        }
 
         .stat-card:hover {
             transform: translateY(-10px);
@@ -122,12 +140,29 @@
             display: block;
         }
 
-        .stat-icon.promedio { color: #4e73df; }
-        .stat-icon.maximo { color: #1cc88a; }
-        .stat-icon.minimo { color: #e74a3b; }
-        .stat-icon.aprobados { color: #36b9cc; }
-        .stat-icon.desaprobados { color: #f6c23e; }
-        .stat-icon.total { color: #858796; }
+        .stat-icon.promedio {
+            color: #4e73df;
+        }
+
+        .stat-icon.maximo {
+            color: #1cc88a;
+        }
+
+        .stat-icon.minimo {
+            color: #e74a3b;
+        }
+
+        .stat-icon.aprobados {
+            color: #36b9cc;
+        }
+
+        .stat-icon.desaprobados {
+            color: #f6c23e;
+        }
+
+        .stat-icon.total {
+            color: #858796;
+        }
 
         .stat-value {
             font-size: 2.5rem;
@@ -362,8 +397,15 @@
         }
 
         @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
         }
 
         @keyframes fadeInUp {
@@ -371,6 +413,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -383,25 +426,25 @@
                 flex-direction: column;
                 gap: 1rem;
             }
-            
+
             .nav-links {
                 gap: 1rem;
             }
-            
+
             .main-container {
                 padding: 0 1rem;
                 margin: 2rem auto;
             }
-            
+
             h1 {
                 font-size: 2rem;
             }
-            
+
             .stats-grid {
                 grid-template-columns: 1fr;
                 gap: 1rem;
             }
-            
+
             .stat-card {
                 padding: 1.5rem;
             }
@@ -409,16 +452,16 @@
             .top-students-grid {
                 grid-template-columns: 1fr;
             }
-            
+
             .chart-container {
                 padding: 1.5rem;
             }
-            
+
             .download-buttons {
                 flex-direction: column;
                 align-items: center;
             }
-            
+
             .btn {
                 width: 100%;
                 max-width: 250px;
@@ -427,13 +470,14 @@
         }
     </style>
 </head>
+
 <body>
     <div class="floating-elements">
         <div class="floating-shape"></div>
         <div class="floating-shape"></div>
         <div class="floating-shape"></div>
     </div>
-    
+
     <nav class="navbar">
         <div class="nav-container">
             <div class="logo">
@@ -445,6 +489,10 @@
                 <a href="/registro"><i class="fas fa-user-plus"></i> Registro</a>
                 <a href="/estadisticas"><i class="fas fa-chart-bar"></i> Estadísticas</a>
                 <a href="/presentaciones"><i class="fas fa-users"></i> Estudiantes</a>
+                <a href="/grafico" target="_blank" class="btn btn-secondary">
+                    <i class="fas fa-chart-pie"></i> Ver Gráfico de Notas
+                </a>
+
             </div>
         </div>
     </nav>
@@ -496,16 +544,17 @@
             <div class="top-students-grid">
                 {% for nombre, nota in mejores_estudiantes %}
                 <div class="top-student-card">
-                    <div class="position-badge {% if loop.index == 2 %}second{% elif loop.index == 3 %}third{% endif %}">
+                    <div
+                        class="position-badge {% if loop.index == 2 %}second{% elif loop.index == 3 %}third{% endif %}">
                         {{ loop.index }}
                     </div>
                     <div class="trophy-icon">
                         {% if loop.index == 1 %}
-                            <i class="fas fa-trophy"></i>
+                        <i class="fas fa-trophy"></i>
                         {% elif loop.index == 2 %}
-                            <i class="fas fa-medal"></i>
+                        <i class="fas fa-medal"></i>
                         {% else %}
-                            <i class="fas fa-award"></i>
+                        <i class="fas fa-award"></i>
                         {% endif %}
                     </div>
                     <div class="student-name">{{ nombre }}</div>
@@ -539,22 +588,22 @@
     </div>
 
     <script>
-    const ctx = document.getElementById('graficoNotas').getContext('2d');
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ['Promedio', 'Máximo', 'Mínimo'],
-            datasets: [{
-                label: 'Notas',
-                data: [{{ promedio }}, {{ maximo }}, {{ minimo }}],
-                backgroundColor: ['#4e73df', '#1cc88a', '#e74a3b'],
-                borderColor: ['#3651c7', '#13855c', '#c0392b'],
-                borderWidth: 2,
-                borderRadius: 8,
-                borderSkipped: false,
+        const ctx = document.getElementById('graficoNotas').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Promedio', 'Máximo', 'Mínimo'],
+                datasets: [{
+                    label: 'Notas',
+                    data: [{{ promedio }}, {{ maximo }}, {{ minimo }}],
+            backgroundColor: ['#4e73df', '#1cc88a', '#e74a3b'],
+            borderColor: ['#3651c7', '#13855c', '#c0392b'],
+            borderWidth: 2,
+            borderRadius: 8,
+            borderSkipped: false,
             }]
         },
-        options: {
+            options: {
             responsive: true,
             plugins: {
                 legend: {
@@ -604,15 +653,16 @@
         }
     });
 
-    // Efecto parallax suave para elementos flotantes
-    window.addEventListener('scroll', () => {
-        const scrolled = window.pageYOffset;
-        const shapes = document.querySelectorAll('.floating-shape');
-        
-        shapes.forEach((shape, index) => {
-            const speed = 0.5 * (index + 1);
-            shape.style.transform = `translateY(${scrolled * speed}px)`;
+        // Efecto parallax suave para elementos flotantes
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const shapes = document.querySelectorAll('.floating-shape');
+
+            shapes.forEach((shape, index) => {
+                const speed = 0.5 * (index + 1);
+                shape.style.transform = `translateY(${scrolled * speed}px)`;
+            });
         });
-    });
     </script>
+
 </html>

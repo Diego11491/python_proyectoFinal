@@ -5,8 +5,6 @@ from utils import (
     cargar_estudiantes_csv,
     eliminar_estudiante_csv,
     editar_estudiante_csv,
-    ordenar_estudiantes,
-    buscar_estudiantes,
     estadisticas_por_grupo_edad,
     obtener_lista_diccionarios
 )
@@ -15,6 +13,9 @@ import numpy as np
 import os
 import io
 from fpdf import FPDF
+import matplotlib
+matplotlib.use('Agg')  # Usar backend sin GUI
+import matplotlib.pyplot as plt
 
 app = Flask(__name__)
 DATA_FILE = "data/estudiantes.csv"
@@ -88,24 +89,23 @@ def estructura_datos():
     datos = obtener_lista_diccionarios(DATA_FILE)
     return render_template("estructura_datos.html", lista_estudiantes=datos)
 
-@app.route("/buscar", methods=["GET", "POST"])
-def buscar():
-    resultados = []
-    termino = ""
-    if request.method == "POST":
-        termino = request.form["termino"]
-        df = cargar_estudiantes_csv(DATA_FILE)
-        resultados = buscar_estudiantes(df, termino).to_dict("records")
-    return render_template("buscar.html", resultados=resultados, termino=termino)
+@app.route("/grafico")
+def grafico():
+    if not os.path.exists(DATA_FILE):
+        return "No hay datos."
 
-@app.route("/ordenar")
-def ordenar():
-    criterio = request.args.get("criterio", "nota")
-    asc = request.args.get("asc", "false") == "true"
-    df = cargar_estudiantes_csv(DATA_FILE)
-    df_ordenado = ordenar_estudiantes(df, columna=criterio, ascendente=asc)
-    estudiantes = df_ordenado.to_dict("records")
-    return render_template("ordenar.html", estudiantes=estudiantes, criterio=criterio, asc=asc)
+    df = pd.read_csv(DATA_FILE)
+    fig, ax = plt.subplots()
+    df["nota"].plot(kind="hist", bins=10, ax=ax, color="skyblue", edgecolor="black")
+    ax.set_title("Distribución de Notas")
+    ax.set_xlabel("Nota")
+    ax.set_ylabel("Frecuencia")
+
+    output = io.BytesIO()
+    plt.savefig(output, format="png")
+    output.seek(0)
+
+    return send_file(output, mimetype="image/png")
 
 @app.route("/editar-estudiante", methods=["POST"])
 def editar_estudiante():
