@@ -4,4 +4,4 @@ numpy
 fpdf2
 xlsxwriter
 matplotlib==3.7.1
-Pillow==9.5.0
+Pillow==10.2.0
