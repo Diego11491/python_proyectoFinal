@@ -297,8 +297,7 @@ def descargar_pdf():
         
         # Guardar en memoria
         output = io.BytesIO()
-        pdf_string = pdf.output(dest='S').encode('latin-1')
-        output.write(pdf_string)
+        output.write(pdf.output(dest='S').encode('latin1'))  # Usar 'latin1' para evitar problemas de codificación
         output.seek(0)
         
         return send_file(
